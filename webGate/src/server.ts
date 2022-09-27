@@ -5,7 +5,7 @@ import * as http from 'http'
 
 dotenv.config() // init process.ev
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.NODE_LOCAL_PORT || 3000
 
 const server = http.createServer(application.instance)
 

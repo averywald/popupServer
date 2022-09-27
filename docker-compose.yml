@@ -1,23 +1,28 @@
-version: '1.0'
+
 services:
     mongodb:
-        image: mongo:latest
+        build: ./database
         # environment:
         #     - name=value
         env_file:
-            - ./database/.env
+            - ./.env
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
+            - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
         ports:
-            - $DB_PORT:$DB_PORT
+            - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
         volumes:
             - db:/data/db
-    webGate:
+    webgate:
         build: ./webGate # build Dockerfile at this location
         depends_on:
             - mongodb # start mongo container first
         # image: webgate:latest
         environment:
-            - MONGODB_CONNSTRING=mongodb://$DB_USER:$DB_PASS@$DB_HOST
+            - MONGODB_CONNSTRING=mongodb://$MONGODB_USER:$MONGODB_PASSWORD@$MONGODB_HOST
         env_file:
-            - ./webGate/.env
+            - ./.env
         ports:
-            - $PORT:$PORT
+            - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+volumes:
+    db:

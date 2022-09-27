@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import mongoose from 'mongoose'
 
 import Controller from '../utils/decorators/controller.decorator'
 import Use from '../utils/decorators/use.decorator'
@@ -9,8 +10,12 @@ import BaseController from './base.controller'
 @Controller('/account')
 export default class AccountController extends BaseController {
 
+	private readonly connectionString: string = 
+		'mongodb://localhost:27017/webgate'
+
 	constructor(publicDirPath: string) {
 		super(publicDirPath, '/account')
+		mongoose.connect(this.connectionString)
 	}
 
 	/**
@@ -40,15 +45,29 @@ export default class AccountController extends BaseController {
 	public login(req: Request, res: Response): void {
 		const { username, password } = req.body // Get POST payload params
 
-		// if (this.authService.authenticateUser(username, password)) {
-		if (username === 'averywald' && password === '2b33r5pl3453!') {
-			res.cookie('logged-in', true) // set cookie for authenticated user
-			res.status(200).redirect('/home') // Send user off
-		}
-		else {
-			res.status(401).redirect(this._basePath + '/login')
-		}
-		
+		const model = mongoose.model('User', 
+			new mongoose.Schema({
+				name: String,
+				pass: String
+			}))
+
+		let result = model.findOne({ name: 'averywald' }, (err: Error, result: {}) => {
+				// if (err) {
+				// 	console.error(err)
+				// }
+				try {
+					if (result) {
+						res.cookie('logged-in', true) // set cookie for authenticated user
+						res.status(200).redirect('/home') // Send user off
+					}
+					else {
+						res.status(401).redirect(this._basePath + '/login')
+					}
+				}
+				catch (err) {
+					console.error(err)
+				}
+		})		
 	}
 
 	@Get('/logout')
