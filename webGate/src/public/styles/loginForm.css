@@ -1,0 +1,17 @@
+div#form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+input.input-field,
+button#submit {
+  margin: 2vw;
+  width: 20vw;
+  height: 2em;
+}
+
+input.input-field.invalid {
+  border: 2px solid red;
+}

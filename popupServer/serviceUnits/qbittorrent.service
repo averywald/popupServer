@@ -1,0 +1,12 @@
+[Unit]
+Description=Runs qbitTorrent headless server
+Requires=Network.target
+After=Network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/qbittorrent-nox
+
+[Install]
+WantedBy=multi-user.target
